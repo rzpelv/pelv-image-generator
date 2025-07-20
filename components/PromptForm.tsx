@@ -19,12 +19,48 @@ interface PromptFormProps {
 }
 
 const stylePresets = [
+    // --- Photographic & Realistic ---
+    { name: 'Photography', keywords: 'professional photography, 8k, sharp focus, high detail, photorealistic' },
+    { name: 'Realistic', keywords: 'realistic, lifelike, ultra-detailed, unreal engine, octane render' },
     { name: 'Cinematic', keywords: 'cinematic, dramatic lighting, epic composition, photorealistic, 4k' },
-    { name: 'Anime', keywords: 'anime style, vibrant colors, detailed line art, manga aesthetic' },
-    { name: '3D Render', keywords: '3d render, octane render, high detail, physically based rendering' },
-    { name: 'Digital Art', keywords: 'digital painting, concept art, fantasy, intricate details, artstation' },
     { name: 'Vintage Photo', keywords: 'vintage photograph, sepia, grainy, 1950s aesthetic, retro' },
+    { name: 'Black & White', keywords: 'black and white photography, monochrome, high contrast, dramatic shadows' },
+    { name: 'Macro Photography', keywords: 'macro photography, close-up, extreme detail, shallow depth of field' },
+    { name: 'Long Exposure', keywords: 'long exposure photography, light trails, motion blur, silky water' },
+    { name: 'Golden Hour', keywords: 'golden hour, soft warm light, sunrise, sunset, beautiful lighting' },
+
+    // --- Digital & 3D Art ---
+    { name: '3D Render', keywords: '3d render, octane render, high detail, physically based rendering, blender' },
+    { name: 'Digital Art', keywords: 'digital painting, concept art, fantasy, intricate details, artstation' },
+    { name: 'Voxel Art', keywords: 'voxel art, 3D pixels, isometric, minecraft style, cubes' },
+    { name: 'Low Poly', keywords: 'low poly, geometric, stylized 3D, vibrant colors' },
+    { name: 'Isometric', keywords: 'isometric, 3D, diorama, detailed, high-angle shot' },
+    { name: 'Cyberpunk', keywords: 'cyberpunk, neon-drenched, futuristic, dystopian, high-tech' },
+    { name: 'Steampunk', keywords: 'steampunk, victorian, gears and cogs, brass and copper, mechanical' },
+    
+    // --- Traditional Art & Illustration ---
+    { name: 'Anime', keywords: 'anime style, vibrant colors, detailed line art, manga aesthetic' },
+    { name: 'Manga', keywords: 'manga style, black and white, screentones, detailed ink work' },
+    { name: 'Cartoon', keywords: 'cartoon style, bold outlines, vibrant colors, simplified shapes, 2D animation' },
+    { name: 'Watercolor', keywords: 'watercolor painting, soft edges, vibrant washes, paper texture' },
+    { name: 'Oil Painting', keywords: 'oil painting, thick brushstrokes, impasto, classic art' },
+    { name: 'Pencil Sketch', keywords: 'pencil sketch, graphite, cross-hatching, hand-drawn, sketchbook' },
+    { name: 'Ink Drawing', keywords: 'ink drawing, calligraphy, detailed line work, black and white' },
+    { name: 'Line Art', keywords: 'line art, black and white, clean lines, minimalist drawing, vector' },
+
+    // --- Historical & Niche Styles ---
+    { name: 'Art Deco', keywords: 'art deco, 1920s style, geometric patterns, gold and black, luxurious' },
+    { name: 'Art Nouveau', keywords: 'art nouveau, style of Alphonse Mucha, intricate lines, decorative, flowing curves, organic forms' },
+    { name: 'Ukiyo-e', keywords: 'Ukiyo-e style, Japanese woodblock print, bold outlines, flat colors, style of Hokusai' },
+    { name: 'Impressionism', keywords: 'impressionist painting, style of Monet, visible brushstrokes, soft light' },
+    { name: 'Surrealism', keywords: 'surrealism, dreamlike, bizarre, strange, style of Salvador Dali' },
+    
+    // --- Graphic & Material Styles ---
     { name: 'Minimalist', keywords: 'minimalist, clean lines, simple, modern, uncluttered' },
+    { name: 'Sticker', keywords: 'die-cut sticker, vector illustration, vibrant colors, white border' },
+    { name: 'Pixel Art', keywords: 'pixel art, 8-bit, 16-bit, retro video game, sprite' },
+    { name: 'Papercraft', keywords: 'papercraft, origami, layered paper, paper quilling, cut paper art' },
+    { name: 'Claymation', keywords: 'claymation style, plasticine, stop-motion, sculpted clay, Aardman studios style' },
 ];
 
 
@@ -36,7 +72,7 @@ const EnhanceIcon = () => (
 
 const LightbulbIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-        <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.657a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM8.343 5.657a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM11 16a1 1 0 10-2 0v1a1 1 0 102 0v-1zM5.657 14.343a1 1 0 00-1.414 1.414l.707.707a1 1 0 001.414-1.414l-.707-.707zM14.343 14.343a1 1 0 001.414 1.414l.707-.707a1 1 0 00-1.414-1.414l-.707-.707zM4 11a1 1 0 100-2H3a1 1 0 100 2h1zM16 11a1 1 0 100-2h1a1 1 0 100 2h-1zM7 10a4 4 0 014-4h.01a4 4 0 014 4 5 5 0 01-8.01 0z" />
+        <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.657a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM8.343 5.657a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM11 16a1 1 0 10-2 0v1a1 1 0 102 0v-1zM5.657 14.343a1 1 0 00-1.414 1.414l.707.707a1 1 0 001.414-1.414l-.707-.707zM14.343 14.343a1 1 0 001.414 1.414l.707.707a1 1 0 00-1.414-1.414l-.707-.707zM4 11a1 1 0 100-2H3a1 1 0 100 2h1zM16 11a1 1 0 100-2h1a1 1 0 100 2h-1zM7 10a4 4 0 014-4h.01a4 4 0 014 4 5 5 0 01-8.01 0z" />
     </svg>
 );
 
@@ -87,22 +123,27 @@ export const PromptForm: React.FC<PromptFormProps> = ({
                     disabled={isBusy}
                 />
             </div>
-            
+
             <div>
-                 <label className="block text-sm font-medium text-gray-300 mb-2">Style Presets</label>
-                 <div className="flex flex-wrap gap-2">
-                     {stylePresets.map(preset => (
-                         <button
-                            key={preset.name}
-                            type="button"
-                            onClick={() => onApplyStyle(preset.keywords)}
-                            disabled={isBusy}
-                            className="px-3 py-1 bg-gray-700 text-sm text-gray-200 rounded-full hover:bg-indigo-600 hover:text-white disabled:bg-gray-800 disabled:cursor-not-allowed disabled:text-gray-500 transition-colors"
-                         >
+                 <label htmlFor="style-preset" className="block text-sm font-medium text-gray-300 mb-2">Style Preset</label>
+                 <select
+                    id="style-preset"
+                    value="" // Keep it empty to show placeholder
+                    onChange={(e) => {
+                        if (e.target.value) {
+                            onApplyStyle(e.target.value);
+                        }
+                    }}
+                    disabled={isBusy}
+                    className="w-full p-3 bg-gray-800 border-2 border-gray-700 rounded-lg text-gray-100 focus:ring-indigo-500 focus:border-indigo-500 transition-colors disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed"
+                >
+                    <option value="" disabled>Select a style to add...</option>
+                    {stylePresets.map(preset => (
+                        <option key={preset.name} value={preset.keywords}>
                             {preset.name}
-                         </button>
-                     ))}
-                 </div>
+                        </option>
+                    ))}
+                </select>
             </div>
 
              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

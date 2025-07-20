@@ -1,6 +1,6 @@
-
 {
   "name": "Pelv Image AI Generator",
   "description": "A modern web application that leverages the Gemini API to generate high-quality images from user-provided text prompts.",
-  "requestFramePermissions": []
+  "requestFramePermissions": [],
+  "prompt": ""
 }

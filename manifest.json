@@ -1,0 +1,16 @@
+{
+  "name": "Pelv Image AI Generator",
+  "short_name": "Pelv AI",
+  "description": "A modern web application that leverages the Gemini API to generate high-quality images from user-provided text prompts.",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#4f46e5",
+  "background_color": "#111827"
+}

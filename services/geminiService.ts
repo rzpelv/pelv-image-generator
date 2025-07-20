@@ -1,99 +1,72 @@
-import { GoogleGenAI } from "@google/genai";
-
-// Ensure the API key is available in the environment variables.
-// Do not add any UI for this, as it's assumed to be pre-configured.
-if (!process.env.API_KEY) {
-  throw new Error("API_KEY environment variable is not set.");
-}
-
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
 /**
- * A centralized handler for API errors. It checks for specific rate-limiting
- * errors and provides a user-friendly message.
- * @param error The error object caught.
- * @param context A string describing where the error occurred (e.g., 'generating image').
+ * A centralized handler for frontend errors after calling the backend API.
+ * @param response The response from the fetch call.
+ * @param context A string describing where the error occurred.
  */
-const handleApiError = (error: unknown, context: string): never => {
-  console.error(`Error ${context}:`, error);
-  if (error instanceof Error) {
-    // Check for specific rate limit / quota exhaustion error strings.
-    if (error.message.includes('429') || error.message.includes('RESOURCE_EXHAUSTED')) {
-      throw new Error("You've exceeded your request quota. Please wait a moment and try again.");
+const handleApiError = async (response: Response, context: string) => {
+    // Try to parse the JSON error message from our backend
+    try {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `An unknown error occurred while ${context}.`);
+    } catch (e) {
+        // If parsing fails, use the status text from the HTTP response
+        throw new Error(response.statusText || `An HTTP error ${response.status} occurred while ${context}.`);
     }
-    // For other errors, pass a more generic but still informative message.
-    throw new Error(`Gemini API Error: ${error.message}`);
-  }
-  // Fallback for non-standard errors.
-  throw new Error(`An unknown error occurred while ${context}.`);
 };
 
-
 /**
- * Generates images from a text prompt using the Gemini API.
- * @param prompt The text prompt to generate the image from.
- * @param aspectRatio The desired aspect ratio of the image.
- * @param numberOfImages The number of images to generate.
+ * Sends a request to our backend serverless function to generate images.
  * @returns A promise that resolves to an array of base64 encoded image strings.
  */
 export const generateImageFromPrompt = async (prompt: string, aspectRatio: string, numberOfImages: number): Promise<string[]> => {
-  try {
-    const response = await ai.models.generateImages({
-      model: 'imagen-3.0-generate-002',
-      prompt: prompt,
-      config: {
-        numberOfImages: numberOfImages,
-        outputMimeType: 'image/jpeg',
-        aspectRatio: aspectRatio,
-      },
+    const response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'generate', prompt, aspectRatio, numberOfImages }),
     });
 
-    if (response.generatedImages && response.generatedImages.length > 0) {
-      const base64ImageBytesArray = response.generatedImages.map(img => img.image.imageBytes);
-      return base64ImageBytesArray;
-    } else {
-      throw new Error('No images were generated.');
+    if (!response.ok) {
+        await handleApiError(response, 'generating image');
     }
-  } catch (error) {
-    handleApiError(error, 'generating image');
-  }
+
+    const data = await response.json();
+    return data.images;
 };
 
 /**
- * Enhances a user's prompt using a text generation model.
- * @param prompt The user's prompt to enhance.
+ * Sends a request to our backend to enhance a prompt.
  * @returns A promise that resolves to a more detailed and descriptive prompt.
  */
 export const enhancePrompt = async (prompt: string): Promise<string> => {
-    try {
-        const instruction = `You are an expert prompt engineer for an AI image generator. Rewrite the following user prompt to be more descriptive, vivid, and detailed. The new prompt should be structured for optimal image generation. Do not add any conversational text or preamble, just return the enhanced prompt itself. User prompt: "${prompt}"`;
+    const response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'enhance', prompt }),
+    });
 
-        const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: instruction,
-        });
-        
-        return response.text;
-    } catch (error) {
-        handleApiError(error, 'enhancing prompt');
+    if (!response.ok) {
+        await handleApiError(response, 'enhancing prompt');
     }
+
+    const data = await response.json();
+    return data.text;
 };
 
 /**
- * Generates a random, creative prompt for image generation.
+ * Sends a request to our backend to get a random prompt.
  * @returns A promise that resolves to a random prompt string.
  */
 export const generateRandomPrompt = async (): Promise<string> => {
-    try {
-        const instruction = `You are a creative assistant. Generate a single, random, interesting, and visually rich prompt for an AI image generator. The prompt should be a short phrase or sentence. Do not add any conversational text, preamble, or quotes. Just return the prompt itself.`;
+    const response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'random' }),
+    });
 
-        const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: instruction,
-        });
-        
-        return response.text.trim();
-    } catch (error) {
-        handleApiError(error, 'generating a random prompt');
+    if (!response.ok) {
+        await handleApiError(response, 'generating a random prompt');
     }
+    
+    const data = await response.json();
+    return data.text;
 };

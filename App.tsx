@@ -84,6 +84,8 @@ const ImageModal: React.FC<ImageModalProps> = ({ imageUrl, onClose, onDownload }
 
 type AppTab = 'configure' | 'history';
 
+const MAX_HISTORY_ITEMS = 50;
+
 const App: React.FC = () => {
   const [prompt, setPrompt] = useState('');
   const [aspectRatio, setAspectRatio] = useState('1:1');
@@ -110,6 +112,8 @@ const App: React.FC = () => {
       }
     } catch (e) {
       console.error("Failed to load history from localStorage:", e);
+      // If parsing fails, clear the corrupted history
+      localStorage.removeItem('pelv-image-gen-history');
     }
     // Cleanup timer on unmount
     return () => {
@@ -122,9 +126,19 @@ const App: React.FC = () => {
   // Save history to localStorage whenever it changes
   useEffect(() => {
     try {
-      localStorage.setItem('pelv-image-gen-history', JSON.stringify(history));
+      const historyToSave = history.slice(0, MAX_HISTORY_ITEMS);
+      localStorage.setItem('pelv-image-gen-history', JSON.stringify(historyToSave));
     } catch (e) {
       console.error("Failed to save history to localStorage:", e);
+      // Attempt to clear and save a smaller slice if quota is exceeded
+      if (e instanceof DOMException && e.name === 'QuotaExceededError') {
+        try {
+            const smallerHistory = history.slice(0, 10); // Drastically reduce
+            localStorage.setItem('pelv-image-gen-history', JSON.stringify(smallerHistory));
+        } catch (finalError) {
+            console.error("Could not save even a smaller history:", finalError);
+        }
+      }
     }
   }, [history]);
 
@@ -150,7 +164,7 @@ const App: React.FC = () => {
         numberOfImages,
         timestamp: new Date().getTime(),
       };
-      setHistory(prevHistory => [newHistoryItem, ...prevHistory]);
+      setHistory(prevHistory => [newHistoryItem, ...prevHistory].slice(0, MAX_HISTORY_ITEMS));
 
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred.';
